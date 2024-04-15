@@ -1,14 +1,17 @@
 <template>
-    <div class="createBtn">
-        <h3>create post: <button>+</button></h3>
-        <div class="createPostContainer">
+
+    <div class="postsContainer" style="width: 100%;">
+        <div class="createBtn">
+        <h3>create post: <button @click.prevent="createPostDisplay = !createPostDisplay">+</button></h3>
+        
+        <div class="createPostContainer" :class="`createPostDisplay-${createPostDisplay ? 'on' : 'off'}`">
 
             <form action="" @submit.prevent="onSubmit">
-                <button style="margin-left: auto;">x</button>
+                <button style="margin-left: auto;"  @click.prevent="createPostDisplay = !createPostDisplay">x</button>
                 <label for="title">титулка:</label>
-                <input type="text" id="title" placeholder="титулка...">
+                <input type="text" id="title" placeholder="титулка..." v-model="titlePost">
                 <label for="header">заголовок:</label>
-                <input type="text" id="header" placeholder="титулка...">
+                <input type="text" id="header" placeholder="заголовок..." v-model="headerPost">
                 <label for="post"></label>
                 <div class="buttonContainer">
                     <button :class="`clicked-button-${clickedButtonItalic ? 'on' : 'off'}`" @click="italic = !italic; clickedButtonItalic = !clickedButtonItalic">italic</button>
@@ -17,17 +20,29 @@
                     <label for="color">color pick:</label>
                     <input v-model="color" type="color">
                     <div class="font-size">
-                        <button>+</button>
+                        <button @click="fontSize += .5">+</button>
                         <span>font size</span>
-                        <button>-</button>
+                        <button @click="fontSize -= .5">-</button>
                     </div>
                 </div>
-                <textarea :class="`style-italic-${italic ? 'on' : 'off'} style-bold-${bold ? 'on' : 'off'} style-underline-${underline ? 'on' : 'off'}`" cols="30" rows="10" style="resize: none; height: 80%;" :style="`color: ${color};`"></textarea>
-                <button style="width: fit-content; margin-left: auto;">отправить</button>
+                <textarea v-model="textareaPost" :class="`style-italic-${italic ? 'on' : 'off'} style-bold-${bold ? 'on' : 'off'} style-underline-${underline ? 'on' : 'off'}`" cols="30" rows="10" style="resize: none; height: 80%;" :style="`color: ${color}; font-size: ${fontSize}rem;`"></textarea>
+                <button style="width: fit-content; margin-left: auto;" @click="addPost">отправить</button>
             </form>
 
         </div>
     </div>
+
+    <div class="posts" v-for="post in posts" :key="post">
+            <div class="post">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.header }}</p>
+                <h4>{{ post.textarea }}</h4>
+            </div>
+        </div>
+    </div>
+
+
+
 </template>
 
 <script setup>
@@ -42,7 +57,30 @@ const clickedButtonBold = ref(false)
 const clickedButtonUnderline = ref(false)
 
 const color = ref('')
-console.log(color.value)
+const fontSize = ref(1)
+
+const createPostDisplay = ref(false)
+
+const titlePost = ref('')
+const headerPost = ref('')
+const textareaPost = ref('')
+
+const posts = ref([])
+
+function addPost(){
+    posts.value.push({
+        title: titlePost.value,
+        header: headerPost.value,
+        textarea: textareaPost.value
+    })
+
+    titlePost.value = ''
+    headerPost.value = ''
+    textareaPost.value = ''
+
+    createPostDisplay.value = !createPostDisplay
+
+}
 
 </script>
 
@@ -102,6 +140,10 @@ console.log(color.value)
         height: 80vh;
 }
 
+.createPostDisplay-off{
+    display: none;
+}
+
 .clicked-button-on{
     background-color: var(--secondary-color);
 }
@@ -116,6 +158,11 @@ console.log(color.value)
 
 .style-underline-on{
     text-decoration: underline;
+}
+
+.posts{
+    display: flex;
+    width: 100%;
 }
 
 </style>

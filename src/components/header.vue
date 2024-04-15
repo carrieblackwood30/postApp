@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import register from './register.vue'
+    import register from './register.vue'
 </script>
 
 <style scoped>
